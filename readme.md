@@ -8,7 +8,7 @@ This project focuses on setting up the infrastructure for the adoption of linear
 - Basic design must be 3D-printable using standard materials  
 - Target force output: **20–30 N** with ripple force of ±5%  
 - Options for passive or active cooling  
-- Custom implementation of Klipper for closed-loop LSM  
+- Custom implementation of klippy for closed-loop LSM  
 - Establish a universal/standard interface for all LSMs  
 - Custom driver board using field-oriented control (FOC)  
   - Option for step/dir input  
@@ -39,29 +39,3 @@ Even with speculative improvements (e.g., increasing force-per-watt to **0.05 N/
 ![Prototype 1: Tubular LSM](media/images/tubular_linear_motor.png)
 
 >This design is directly based on work done by cmore839 in [DIY Linear Motor](https://github.com/cmore839/DIY-Linear-Motor)
-
-Simulation results indicate this motor can achieve **~23.6 N** with ripple force of ±3.5%. These results come from a magnetics-only DEAP optimization script. Before prototyping:  
-
-- Passive thermal analysis will be performed  
-- If needed, an active cooling assembly will be designed and then validated using Autodesk CFD
-
-### Blueshark v1.2-dev + DEAP: Candidate Motor Parameters
-```json
-{
-    "Slot thickness": 7.808841637005781,
-    "Slot axial length": 6.282677823549378,
-    "Slot axial spacing": 1.2,
-    "Wire diameter": 0.4,
-    "status": "completed",
-    "fitness": {
-        "Average Force (N)": 23.665705333333335,
-        "Force Per Watt (N/W)": 0.23847930884925927,
-        "Peak-to-Peak Ripple (N)": 1.625355,
-        "Inductance (H)": 0.002088156862745098,
-        "Resistance (Ohms)": 4.134828405520234,
-        "Time Constant (S)": 0.0005050165709312842
-    }
-}
-```
-Raw data: [/blueshark1.2+DEAP.json](/motors/tubular_lsm/blueshark1.2+DEAP.json).
->⚠️ Note: These results are likely optimistic. DEAP maximized coil size, which boosts winding count and force but does not account for thermal limits. Once Blueshark release + DEAP incorporates thermal objectives, slot sizes are expected to shrink, producing more realistic results.
