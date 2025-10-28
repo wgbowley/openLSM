@@ -1,37 +1,44 @@
-## Bluefin: Linear Motors for 3D printers
-![Bluefin Logo](media//images/bluefin.png)
+<p align="center">
+  <img src="media\images\bluefin.png" alt="BlueFin Logo" style="max-width:600px;">
+  <br>
+  <em> High Performance Low Cost Linear Motors – built with love by <a href="https://github.com/wgbowley">William Bowley</a> & <a href="https://github.com/LawsonDG">Lawson Gallup</a> </em>
+</p>
+
+---
+![Work in Progress](https://img.shields.io/badge/status-wip-orange)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+Part of the `blue` series projects, with the goal of making linear motors viable for 3D printing and other applications at the hobbyist level.
 
 ## Overview
-This project focuses on setting up the infrastructure for the adoption of linear synchronous motors (LSMs) for 3D printing—especially large-format applications. The design methodology is to use [Blueshark: FEA](https://github.com/wgbowley/BlueShark) to automatically explore the design space, identify promising motors, and then verify them with a high-fidelity solver.
+**BlueFin** is the umbrella name for a series of low-cost, high-performance linear synchronous motors (LSMs) for 3D printing. The objective of **BlueFin** is to design and validate an LSM for hobbyists to make with limited resources and tooling. 
 
 ### Objectives
 - Basic design must be 3D-printable using standard materials  
-- Target force output: **20–30 N** with ripple force of ±5%  
+- Target force output: **15–25 N** with ripple force of ±5%  
 - Options for passive or active cooling  
-- Custom implementation of klippy for closed-loop LSM  
-- Establish a universal/standard interface for all LSMs  
 - Custom driver board using field-oriented control (FOC)  
   - Option for step/dir input  
-- Standardized parameter file for LSMs to allow easy sharing of projects  
-
----
 
 ## Prototype 0: Flat LSM (FLSM)
-![Prototype 0: Flat LSM](media/images/flat_linear_motor.png)
 
-Prototype 0 had a force output of ~0.5 N with ~20 W input power. This first prototype showed poor force output and efficiency due to:
+<div align="center">
+  <img src="media/images/flat_linear_motor.png" alt="Prototype 0: Flat LSM" style="max-width: 600px; width: 100%; height: auto;">
+</div>
+
+Prototype 0 had a force output of ~0.5 N with ~20 W input power. This first prototype showed poor force output and efficiency but did prove that a 3D-printed linear motor can be made. Here are the main insights:
 
 1. **Architecture mismatch**  
-   Flat LSMs can achieve high precision (commercially proven), but they rely on laminated silicon steel armatures. Using laminated armatures would break the project objectives, so a new architecture must be explored.  
-   > This path may still be revisited; documentation is in [/flat_lsm](/motors/flat_lsm/).
+   FLSMs can achieve high force (commercially proven), but they rely on laminated silicon steel armatures. This is not ideal for a hobbyist as they’re quite complex to manufacture. It also breaks the project’s objectives, so a new architecture must be explored.  
+   > This path may still be revisited; documentation can be found in [/flat_lsm](/motors/flat_lsm/).
 
 2. **Thermal mismanagement**  
-   Thermal analysis wasn’t integrated into Blueshark during design. As a result, coil forms melted, creating friction between the armature and track. Future work must integrate thermal analysis directly into the optimization pipeline.
+   Thermal analysis of the motor during operation was not performed, and as a result, the coil forms melted in testing. This led to increased friction between the armature and track. Future work must integrate thermal analysis directly into the optimization process. 
 
 3. **High phase resistance**  
-   The assumption that `0.21 mm` copper wire would suffice proved false. Future iterations should perform parameter sweeps of wire sizes during optimization.
+   `0.21mm` copper wire was chosen as it was on hand, but it proved to have much too high resistance after winding the coils. Hence, future iterations should perform a parametric sweep of wire sizes during optimization while biasing toward lower phase resistance.
 
-Even with speculative improvements (e.g., increasing force-per-watt to **0.05 N/W**), it would take ~400 W to reach the force target. For an XY-coordinate 3D printer, it would require 2 motors at 800 W, which makes this architecture rather impractical for hobbyists.
+Even with speculative improvements (e.g., increasing force-per-watt to **0.05 N/W**), it would take ~400 W to reach the force target. For an XY-coordinate 3D printer, it would require two motors at 800 W, which makes this architecture rather impractical for hobbyists.
 
 ---
 
