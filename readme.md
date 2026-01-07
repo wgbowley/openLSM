@@ -1,48 +1,62 @@
 <p align="center">
-  <img src="media\images\bluefin.png" alt="BlueFin Logo" style="max-width:600px;">
+  <img src="media/images/logo_openlsm.png" alt="OpenLSM" style="max-width:600px;">
   <br>
-  <em> High Performance Low Cost Linear Motors – built with love by <a href="https://github.com/wgbowley">William Bowley</a> & <a href="https://github.com/LawsonDG">Lawson Gallup</a> </em>
+  <em> High Performance Low Cost Linear Motors – Designed & built by <a href="https://github.com/wgbowley">William Bowley</a> & <a href="https://github.com/LawsonDG">Lawson Gallup</a> </em>
 </p>
 
 ---
+FDM 3D printers have evolved from commercial to household items, but they still rely on belts and pulleys, which wear out after a few thousand hours of use. Their motion system was perfect for nearly three decades, but micro-stepping can only take us so far. While AC servo motors address the micro-stepping problem, they depend on the same motion system. Furthermore, they cost upwards of 10 to 20 times more while also requiring dedicated driver boards.
+
+
+## Overview
 ![Work in Progress](https://img.shields.io/badge/status-wip-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-Part of the `blue` series projects, with the goal of making linear motors viable for 3D printing and other applications at the hobbyist level.
+OpenLSM is a research project striving to produce high-performance linear motors while minimising complexity. The hybrid acronym “OpenLSM” stands for open linear synchronous motors, essentially the same technology used in modern drones and electric vehicles. Linear motors use the same fundamental principles; however, they are built with different geometries to achieve their linear motion.
 
-## Overview
-**BlueFin** is the umbrella name for a series of low-cost, high-performance linear synchronous motors (LSMs) for 3D printing. The objective of **BlueFin** is to design and validate an LSM for hobbyists to make with limited resources and tooling. 
 
-### Objectives
-- Basic design must be 3D-printable using standard materials  
-- Target force output: **15–25 N** with ripple force of ±5%  
-- Options for passive or active cooling  
-- Custom driver board using field-oriented control (FOC)  
-  - Option for step/dir input  
 
-## Prototype 0: Flat LSM (FLSM)
+They should allow for continuous motion at the hardware level, while also having no expandability issues. Whereas for core-xy, it requires approximately 4mm of belt length for every 1 mm of extra travel distance. That leads to harmonic problems, which are resolved with belt tensioning. That ultimately stresses the frame while also wearing down the pulley's teeth. However, it should be emphasized that these longevity issues are mostly a problem for large-format FDM printers. Linear motors avoid these problems due to their reliance on direct motion and minimal mechanical parts. 
+
+## Prototype 0: The curse of blindly following standards
+
+The first prototype demonstrated poor force output with approximately 0.5N at 20W input power. Which is 30 times off the force target. However, it is not all doom and gloom; the general architecture of the “flat” linear motor did work, just very poorly. Even with speculative improvements, it would require ~400W to reach the minimal target force for a single axis. 
 
 <div align="center">
-  <img src="media/images/flat_linear_motor.png" alt="Prototype 0: Flat LSM" style="max-width: 600px; width: 100%; height: auto;">
+  <img src="media/prototype_0/prototype_0.png" alt="Prototype 0: flat linear motor" style="max-width: 600px; height: auto;">
 </div>
 
-Prototype 0 had a force output of ~0.5 N with ~20 W input power. This first prototype showed poor force output and efficiency but did prove that a 3D-printed linear motor can be made. Here are the main insights:
 
-1. **Architecture mismatch**  
-   FLSMs can achieve high force (commercially proven), but they rely on laminated silicon steel armatures. This is not ideal for a hobbyist as they’re quite complex to manufacture. It also breaks the project’s objectives, so a new architecture must be explored.  
-   > This path may still be revisited; documentation can be found in [/flat_lsm](/motors/flat_lsm/).
+The main insights from this prototype are that the flat linear motor is commercially the standard, but must heavily rely on the usage of laminated silicon steel armatures. They are quite complex to manufacture, hence breaking the project objectives. A new architecture must be explored in the future. Another key insight is that thermal analysis must be considered with magneto analysis. Or risk the coil forms melting during testing again. Hence, a multi-physics approach is required for future design to succeed. Lastly, the high phase resistance led to the motor operating under voltage-limiting conditions, and thus, minimal current could be delivered. 
 
-2. **Thermal mismanagement**  
-   Thermal analysis of the motor during operation was not performed, and as a result, the coil forms melted in testing. This led to increased friction between the armature and track. Future work must integrate thermal analysis directly into the optimization process. 
 
-3. **High phase resistance**  
-   `0.21mm` copper wire was chosen as it was on hand, but it proved to have much too high resistance after winding the coils. Hence, future iterations should perform a parametric sweep of wire sizes during optimization while biasing toward lower phase resistance.
 
-Even with speculative improvements (e.g., increasing force-per-watt to **0.05 N/W**), it would take ~400 W to reach the force target. For an XY-coordinate 3D printer, it would require two motors at 800 W, which makes this architecture rather impractical for hobbyists.
+## Prototype 1: Actual experimentation instead of standards
 
----
+The current prototype that is being developed is based on work done by cmore839 on his tubular linear motor ([DIY Linear Motor](https://github.com/cmore839/DIY-Linear-Motor)). This motor type is ideal for ironless designs as it geometrically ensures maximal flux usage rather than guiding it with iron. Currently, this prototype is nearly at the stage of building and testing. The main limiting factor is the data board, which should allow for numerical results due to its range of sensors. Specifically, the ADXL345 accelerometer, MAX31885 for thermal data, and the AS5311 magnetic encoder for position data. An automatic coil winder was also developed for this prototype, which enables inductance and resistance matching. Lastly, thermal-magneto axial symmetrical modelling was used to validate this design rather than the TLAR method.
 
-## Current Development: Tubular LSM (TLSM)
-![Prototype 1: Tubular LSM](media/images/tubular_linear_motor.png)
+![Prototype 1: Tubular LSM](media/prototype_1/tubular_linear_motor.png)
 
->This design is directly based on work done by cmore839 in [DIY Linear Motor](https://github.com/cmore839/DIY-Linear-Motor)
+
+# Credits:
+
+### Research & Development Enabled by:
+* [FEMM](https://www.femm.info/wiki/HomePage) - Thank you, Dr. Meeker, for creating FEMM; it was indispensable for prototype 1.
+* [SimpleFOC](https://simplefoc.com/) - Thank you, everyone, at simple-foc for developing such a wonderful driver, specifically Runger, for the encoder help.
+* Thank you, [Matthew Sorensen](https://sorens.in), for your research into the usage of the AS5311 for 3d printers
+* Thank you, [cmore839](https://github.com/cmore839), for your research into tubular linear motors and for creating your very informative Discord server.
+* Thank you, [Screbuts @ World of Engineer](https://discord.gg/YFEveHYyeB), for the initial scoping help.
+
+
+### Bibtex Citation:
+
+```
+@misc{Bowley_Gallup_2026,
+  author = {Bowley, William and Gallup, Lawson},
+  title = {{openLSM}},
+  url = {https://github.com/wgbowley/openLSM},
+  year = {2026},
+  note = {GitHub repository},
+  license = {MIT}
+}
+```
